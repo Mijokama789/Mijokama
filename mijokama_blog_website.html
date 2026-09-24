@@ -1,0 +1,1408 @@
+<!DOCTYPE html>
+<html lang="de" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mijokama - Me, my Life and I</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            red: '#f43f5e',
+                            purple: '#a855f7',
+                            blue: '#3b82f6',
+                            pink: '#ec4899',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome for modern icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .gradient-text {
+            background: linear-gradient(135deg, #f43f5e, #ec4899, #a855f7, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #f43f5e 0%, #ec4899 35%, #a855f7 70%, #3b82f6 100%);
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col justify-between selection:bg-pink-500 selection:text-white">
+
+    <!-- Navigation Bar -->
+    <header class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <!-- Logo & Brand -->
+                <div class="flex items-center space-x-3 cursor-pointer" onclick="router.navigate('home')">
+                    <div class="w-12 h-12 rounded-2xl gradient-bg flex items-center justify-center text-white shadow-md shadow-pink-500/20">
+                        <i class="fa-solid fa-feather-pointed text-xl"></i>
+                    </div>
+                    <div>
+                        <span class="text-xl sm:text-2xl font-bold tracking-tight gradient-text">Mijokama</span>
+                        <p class="text-xs text-slate-500 font-medium tracking-wide">Me, my Life and I</p>
+                    </div>
+                </div>
+
+                <!-- Desktop Nav -->
+                <nav class="hidden md:flex items-center space-x-6 text-sm font-medium">
+                    <button onclick="router.navigate('home')" class="nav-link text-slate-600 hover:text-pink-600 transition py-2" data-page="home">Startseite</button>
+                    
+                    <!-- Blog Dropdown -->
+                    <div class="relative group">
+                        <button class="nav-link text-slate-600 hover:text-pink-600 transition py-2 flex items-center gap-1.5" data-page="blog">
+                            Blog <i class="fa-solid fa-chevron-down text-xs transition-transform group-hover:rotate-180"></i>
+                        </button>
+                        <div class="absolute left-0 mt-1 w-56 bg-white border border-slate-100 rounded-2xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform translate-y-2 group-hover:translate-y-0 p-2 z-50">
+                            <button onclick="router.navigate('blog', 'all')" class="w-full text-left px-3.5 py-2.5 rounded-xl hover:bg-pink-50 hover:text-pink-600 text-slate-700 text-xs font-semibold transition">Alle Beiträge</button>
+                            <button onclick="router.navigate('blog', 'Lifestyle')" class="w-full text-left px-3.5 py-2.5 rounded-xl hover:bg-pink-50 hover:text-pink-600 text-slate-700 text-xs font-semibold transition flex items-center gap-2"><i class="fa-solid fa-mug-hot w-4 text-pink-500"></i> Lifestyle</button>
+                            <button onclick="router.navigate('blog', 'Food')" class="w-full text-left px-3.5 py-2.5 rounded-xl hover:bg-pink-50 hover:text-pink-600 text-slate-700 text-xs font-semibold transition flex items-center gap-2"><i class="fa-solid fa-utensils w-4 text-red-500"></i> Food</button>
+                            <button onclick="router.navigate('blog', 'Selflove and Mindset')" class="w-full text-left px-3.5 py-2.5 rounded-xl hover:bg-pink-50 hover:text-pink-600 text-slate-700 text-xs font-semibold transition flex items-center gap-2"><i class="fa-solid fa-spa w-4 text-purple-500"></i> Selflove & Mindset</button>
+                            <button onclick="router.navigate('blog', 'Just-In-Case')" class="w-full text-left px-3.5 py-2.5 rounded-xl hover:bg-pink-50 hover:text-pink-600 text-slate-700 text-xs font-semibold transition flex items-center gap-2"><i class="fa-solid fa-suitcase w-4 text-blue-500"></i> Just-In-Case</button>
+                        </div>
+                    </div>
+
+                    <button onclick="router.navigate('about')" class="nav-link text-slate-600 hover:text-pink-600 transition py-2" data-page="about">Über mich</button>
+                    <button onclick="router.navigate('contact')" class="nav-link text-slate-600 hover:text-pink-600 transition py-2" data-page="contact">Kontakt</button>
+                </nav>
+
+                <!-- User & Auth Actions -->
+                <div class="hidden md:flex items-center space-x-3">
+                    <div id="auth-status-container" class="flex items-center space-x-3">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden flex items-center">
+                    <button onclick="toggleMobileMenu()" class="text-slate-700 hover:text-pink-600 p-2 rounded-xl focus:outline-none">
+                        <i class="fa-solid fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Drawer -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-b border-slate-200 px-4 pt-2 pb-6 space-y-2">
+            <button onclick="router.navigate('home'); toggleMobileMenu();" class="block w-full text-left px-4 py-3 rounded-xl hover:bg-pink-50 font-medium text-slate-700">Startseite</button>
+            <div class="px-4 py-2 font-semibold text-xs text-slate-400 uppercase tracking-wider">Blog Kategorien</div>
+            <button onclick="router.navigate('blog', 'all'); toggleMobileMenu();" class="block w-full text-left pl-8 pr-4 py-2 rounded-xl hover:bg-pink-50 text-slate-600 text-sm">Alle Beiträge</button>
+            <button onclick="router.navigate('blog', 'Lifestyle'); toggleMobileMenu();" class="block w-full text-left pl-8 pr-4 py-2 rounded-xl hover:bg-pink-50 text-slate-600 text-sm">Lifestyle</button>
+            <button onclick="router.navigate('blog', 'Food'); toggleMobileMenu();" class="block w-full text-left pl-8 pr-4 py-2 rounded-xl hover:bg-pink-50 text-slate-600 text-sm">Food</button>
+            <button onclick="router.navigate('blog', 'Selflove and Mindset'); toggleMobileMenu();" class="block w-full text-left pl-8 pr-4 py-2 rounded-xl hover:bg-pink-50 text-slate-600 text-sm">Selflove & Mindset</button>
+            <button onclick="router.navigate('blog', 'Just-In-Case'); toggleMobileMenu();" class="block w-full text-left pl-8 pr-4 py-2 rounded-xl hover:bg-pink-50 text-slate-600 text-sm">Just-In-Case</button>
+            <button onclick="router.navigate('about'); toggleMobileMenu();" class="block w-full text-left px-4 py-3 rounded-xl hover:bg-pink-50 font-medium text-slate-700">Über mich</button>
+            <button onclick="router.navigate('contact'); toggleMobileMenu();" class="block w-full text-left px-4 py-3 rounded-xl hover:bg-pink-50 font-medium text-slate-700">Kontakt</button>
+            <div id="mobile-auth-container" class="pt-4 border-t border-slate-100 flex flex-col gap-2">
+                <!-- Mobile Auth populated by JS -->
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Dynamic Content Container -->
+    <main class="flex-grow">
+        <div id="app-content" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <!-- Dynamic page views rendered here -->
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 mt-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div class="space-y-4 md:col-span-2">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-xl gradient-bg flex items-center justify-center text-white shadow-sm">
+                            <i class="fa-solid fa-feather-pointed text-base"></i>
+                        </div>
+                        <span class="text-xl font-bold gradient-text">Mijokama</span>
+                    </div>
+                    <p class="text-slate-500 text-sm max-w-sm">Dein persönlicher Safe Space für Lifestyle, Food, Selflove und inspirierende Gedanken im modernen Look.</p>
+                </div>
+                <div>
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4">Navigation</h4>
+                    <ul class="space-y-2.5 text-sm font-medium text-slate-600">
+                        <li><button onclick="router.navigate('home')" class="hover:text-pink-600 transition">Startseite</button></li>
+                        <li><button onclick="router.navigate('blog')" class="hover:text-pink-600 transition">Blog Übersicht</button></li>
+                        <li><button onclick="router.navigate('about')" class="hover:text-pink-600 transition">Über mich</button></li>
+                        <li><button onclick="router.navigate('contact')" class="hover:text-pink-600 transition">Kontakt & Nachrichten</button></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4">Rechtliches & Info</h4>
+                    <ul class="space-y-2.5 text-sm text-slate-500">
+                        <li><a href="#" onclick="showModal('impressum')" class="hover:text-pink-600 transition">Impressum</a></li>
+                        <li><a href="#" onclick="showModal('datenschutz')" class="hover:text-pink-600 transition">Datenschutz</a></li>
+                        <li><span class="text-xs bg-slate-100 text-slate-600 px-2.5 py-1 rounded-full font-semibold">GitHub Pages Ready</span></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="mt-12 pt-8 border-t border-slate-100 flex flex-col sm:flex-row justify-between items-center text-xs text-slate-400">
+                <p>&copy; 2026 Mijokama - Me, my Life and I. Alle Rechte vorbehalten.</p>
+                <div class="flex space-x-4 mt-4 sm:mt-0 text-base">
+                    <a href="#" class="hover:text-pink-600 transition"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" class="hover:text-pink-600 transition"><i class="fa-brands fa-pinterest"></i></a>
+                    <a href="#" class="hover:text-pink-600 transition"><i class="fa-brands fa-tiktok"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Universal Modal Container -->
+    <div id="modal-container" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm hidden">
+        <div id="modal-content" class="bg-white rounded-3xl shadow-2xl max-w-md w-full mx-4 overflow-hidden transform transition-all">
+            <!-- Populated dynamically -->
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col space-y-2 pointer-events-none"></div>
+
+    <!-- Application Logic -->
+    <script>
+        // --- State Management & LocalStorage Persistence ---
+        const ADMIN_CREDENTIALS = { username: "admin", password: "mijokama2026" };
+
+        const DEFAULT_ABOUT_TEXT = `Hi! Schön, dass du da bist. Ich bin der Kopf und das Herz hinter **Mijokama – Me, my Life and I**. 
+Dieser Blog ist mein persönlicher Zufluchtsort und kreativer Spielplatz, auf dem ich meine Gedanken zu den schönen Dingen des Lebens mit dir teile. 
+
+Ob leckere Rezepte, die die Seele wärmen, ehrliche Gedanken über Selflove, Mindset und persönliche Weiterentwicklung oder spannende Lifestyle-Tipps – hier bist du genau richtig. 
+
+Mach es dir gemütlich, stöbere durch die Beiträge oder schreib mir gerne direkt über das Kontaktformular.`;
+
+        const DEFAULT_POSTS = [
+            {
+                id: 'post-1',
+                title: 'Der perfekte Morgen: 5 Routinen für mehr Achtsamkeit',
+                category: 'Selflove and Mindset',
+                content: 'Wie wir in den Tag starten, bestimmt oft unseren gesamten Gemütszustand. Mit diesen fünf einfachen Schritten bringst du Ruhe und Fokus in deinen Morgen. Von digitaler Detox in der ersten Stunde bis hin zu einer Tasse warmem Zitronenwasser.',
+                image: 'https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=800&q=80',
+                video: '',
+                author: 'Admin',
+                date: '2026-06-01',
+                status: 'published',
+                likes: 24,
+                likedBy: []
+            },
+            {
+                id: 'post-2',
+                title: 'Creamy Pasta Bowl mit getrockneten Tomaten',
+                category: 'Food',
+                content: 'Comfort Food in unter 20 Minuten! Diese cremige Pasta vereint frische Kräuter, Cashew-Frischkäse und aromatische getrocknete Tomaten. Perfekt für stressige Tage, an denen man sich selbst etwas Gutes tun möchte.',
+                image: 'https://images.unsplash.com/photo-1621996346565-e3d5d6281298?auto=format&fit=crop&w=800&q=80',
+                video: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+                author: 'Admin',
+                date: '2026-06-03',
+                status: 'published',
+                likes: 42,
+                likedBy: []
+            },
+            {
+                id: 'post-3',
+                title: 'Minimalismus im Alltag: Weniger Zeug, mehr Kopf',
+                category: 'Lifestyle',
+                content: 'Wann hast du das letzte Mal deinen Kleiderschrank oder deinen Desktop aufgeräumt? Minimalismus bedeutet nicht, in einer leeren weißen Wohnung zu leben, sondern Platz für das Wesentliche zu schaffen.',
+                image: 'https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&w=800&q=80',
+                video: '',
+                author: 'Admin',
+                date: '2026-06-04',
+                status: 'published',
+                likes: 19,
+                likedBy: []
+            },
+            {
+                id: 'post-4',
+                title: 'Der ultimative Notfall-Guide für verregnete Sonntage',
+                category: 'Just-In-Case',
+                content: 'Es regnet, du hast alles aufgeräumt, Netflix durchgespielt und weißt nicht wohin mit deiner Energie? Hier ist dein Rettungsschirm: Kreative DIY-Ideen, Journaling-Prompts und Playlist-Empfehlungen.',
+                image: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=800&q=80',
+                video: '',
+                author: 'Admin',
+                date: '2026-06-05',
+                status: 'draft',
+                likes: 0,
+                likedBy: []
+            }
+        ];
+
+        const DEFAULT_COMMENTS = {
+            'post-1': [
+                { id: 'c1', author: 'Sarah', text: 'Der Tipp mit dem Smartphone am Morgen hat mein Leben verändert!', date: '2026-06-02' }
+            ],
+            'post-2': [
+                { id: 'c2', author: 'Julian', text: 'Gestern nachgekocht,absolute Empfehlung! 10/10.', date: '2026-06-03' }
+            ]
+        };
+
+        let appState = {
+            currentUser: JSON.parse(localStorage.getItem('mijokama_user')) || null, // { username, role: 'admin'|'user' }
+            posts: JSON.parse(localStorage.getItem('mijokama_posts')) || DEFAULT_POSTS,
+            comments: JSON.parse(localStorage.getItem('mijokama_comments')) || DEFAULT_COMMENTS,
+            guestSubmissions: JSON.parse(localStorage.getItem('mijokama_submissions')) || [],
+            messages: JSON.parse(localStorage.getItem('mijokama_messages')) || [],
+            aboutText: localStorage.getItem('mijokama_about') || DEFAULT_ABOUT_TEXT
+        };
+
+        function saveState() {
+            localStorage.setItem('mijokama_user', JSON.stringify(appState.currentUser));
+            localStorage.setItem('mijokama_posts', JSON.stringify(appState.posts));
+            localStorage.setItem('mijokama_comments', JSON.stringify(appState.comments));
+            localStorage.setItem('mijokama_submissions', JSON.stringify(appState.guestSubmissions));
+            localStorage.setItem('mijokama_messages', JSON.stringify(appState.messages));
+            localStorage.setItem('mijokama_about', appState.aboutText);
+        }
+
+        // --- Router System ---
+        const router = {
+            currentPage: 'home',
+            currentParam: 'all',
+            currentPostId: null,
+            navigate: function(page, param = null, postId = null) {
+                this.currentPage = page;
+                this.currentParam = param;
+                this.currentPostId = postId;
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                renderApp();
+            }
+        };
+
+        // --- Notification Toast System ---
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            const bgClass = type === 'success' ? 'bg-slate-900 text-white' : 'bg-red-600 text-white';
+            toast.className = `${bgClass} px-5 py-3 rounded-2xl shadow-xl text-sm font-medium flex items-center space-x-3 transform translate-y-4 opacity-0 transition-all duration-300 pointer-events-auto`;
+            toast.innerHTML = `<i class="fa-solid ${type === 'success' ? 'fa-circle-check text-pink-400' : 'fa-circle-exclamation'}"></i><span>${message}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.classList.remove('translate-y-4', 'opacity-0');
+            }, 10);
+            setTimeout(() => {
+                toast.classList.add('translate-y-4', 'opacity-0');
+                setTimeout(() => toast.remove(), 300);
+            }, 3500);
+        }
+
+        // --- Render Main Application UI ---
+        function renderApp() {
+            renderAuthNavbar();
+            const container = document.getElementById('app-content');
+            
+            switch(router.currentPage) {
+                case 'home':
+                    container.innerHTML = renderHomePage();
+                    break;
+                case 'blog':
+                    container.innerHTML = renderBlogPage(router.currentParam);
+                    break;
+                case 'post-detail':
+                    container.innerHTML = renderPostDetailPage(router.currentPostId);
+                    break;
+                case 'about':
+                    container.innerHTML = renderAboutPage();
+                    break;
+                case 'contact':
+                    container.innerHTML = renderContactPage();
+                    break;
+                case 'admin':
+                    if (!appState.currentUser || appState.currentUser.role !== 'admin') {
+                        router.navigate('home');
+                        showToast('Zugriff verwehrt. Nur für Administratoren.', 'error');
+                        return;
+                    }
+                    container.innerHTML = renderAdminDashboard();
+                    break;
+                default:
+                    container.innerHTML = renderHomePage();
+            }
+        }
+
+        // --- Navigation Auth UI Updates ---
+        function renderAuthNavbar() {
+            const container = document.getElementById('auth-status-container');
+            const mobileContainer = document.getElementById('mobile-auth-container');
+            
+            if (appState.currentUser) {
+                const isAdmin = appState.currentUser.role === 'admin';
+                const badge = isAdmin ? '<span class="bg-pink-100 text-pink-600 px-2.5 py-0.5 rounded-full text-xs font-bold">Admin</span>' : '<span class="bg-slate-100 text-slate-600 px-2.5 py-0.5 rounded-full text-xs font-semibold">User</span>';
+                
+                let adminBtn = isAdmin ? `<button onclick="router.navigate('admin')" class="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white px-4 py-2 rounded-xl text-xs font-semibold shadow-md shadow-pink-500/20 transition flex items-center gap-1.5"><i class="fa-solid fa-gauge"></i> Dashboard</button>` : '';
+                
+                container.innerHTML = `
+                    <div class="flex items-center space-x-3">
+                        <div class="text-right">
+                            <p class="text-xs font-bold text-slate-700">${appState.currentUser.username}</p>
+                            ${badge}
+                        </div>
+                        ${adminBtn}
+                        <button onclick="logout()" class="text-slate-400 hover:text-red-500 p-2 rounded-xl transition" title="Abmelden"><i class="fa-solid fa-right-from-bracket"></i></button>
+                    </div>
+                `;
+
+                mobileContainer.innerHTML = `
+                    <div class="px-4 py-2 flex items-center justify-between">
+                        <div>
+                            <span class="text-sm font-bold text-slate-800">${appState.currentUser.username}</span>
+                            ${badge}
+                        </div>
+                        <button onclick="logout()" class="text-red-500 text-sm font-semibold">Abmelden</button>
+                    </div>
+                    ${isAdmin ? `<button onclick="router.navigate('admin'); toggleMobileMenu();" class="w-full text-left px-4 py-3 rounded-xl bg-pink-50 text-pink-600 font-semibold">Admin Dashboard</button>` : ''}
+                `;
+            } else {
+                container.innerHTML = `
+                    <button onclick="openAuthModal('login')" class="text-slate-600 hover:text-pink-600 px-4 py-2 text-sm font-semibold transition">Anmelden</button>
+                    <button onclick="openAuthModal('register')" class="bg-slate-900 hover:bg-slate-800 text-white px-4 py-2 rounded-xl text-sm font-semibold shadow-md transition">Registrieren</button>
+                `;
+
+                mobileContainer.innerHTML = `
+                    <button onclick="openAuthModal('login'); toggleMobileMenu();" class="w-full text-center py-3 rounded-xl bg-slate-100 font-semibold text-slate-700">Anmelden</button>
+                    <button onclick="openAuthModal('register'); toggleMobileMenu();" class="w-full text-center py-3 rounded-xl gradient-bg text-white font-semibold">Registrieren</button>
+                `;
+            }
+        }
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        // --- 1. Startseite (Home) ---
+        function renderHomePage() {
+            const publishedPosts = appState.posts.filter(p => p.status === 'published');
+            const latestPost = publishedPosts[publishedPosts.length - 1];
+            
+            // Personalized feed logic (show 3 recent published posts)
+            const feedPosts = publishedPosts.slice().reverse().slice(0, 3);
+
+            return `
+                <div class="space-y-16 animate-fadeIn">
+                    <!-- Hero Section -->
+                    <div class="relative rounded-3xl overflow-hidden gradient-bg text-white p-8 sm:p-16 shadow-2xl">
+                        <div class="absolute inset-0 bg-black/10"></div>
+                        <div class="relative z-10 max-w-2xl space-y-6">
+                            <span class="bg-white/20 backdrop-blur-md px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider">Willkommen bei Mijokama</span>
+                            <h1 class="text-3xl sm:text-5xl font-black tracking-tight leading-tight">Me, my Life and I – Dein digitaler Safe Space.</h1>
+                            <p class="text-white/90 text-sm sm:text-base leading-relaxed">Entdecke inspirierende Beiträge über Lifestyle, gesunde Food-Rezepte, Selflove und wertvolle Gedanken für deinen Alltag.</p>
+                            <div class="flex flex-wrap gap-4 pt-2">
+                                <button onclick="router.navigate('blog')" class="bg-white text-slate-900 hover:bg-slate-100 font-bold px-6 py-3.5 rounded-2xl shadow-lg transition flex items-center gap-2 text-sm">
+                                    <i class="fa-solid fa-book-open text-pink-600"></i> Zum Blog
+                                </button>
+                                <button onclick="router.navigate('contact')" class="bg-white/10 hover:bg-white/20 border border-white/30 text-white font-semibold px-6 py-3.5 rounded-2xl backdrop-blur-md transition text-sm">
+                                    Nachricht senden
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Search Bar Section -->
+                    <div class="max-w-2xl mx-auto">
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                            </span>
+                            <input type="text" id="home-search-input" onkeyup="handleHomeSearch(event)" placeholder="Nach Themen, Stichpunkten oder Titeln suchen..." class="w-full pl-12 pr-28 py-4 bg-white border border-slate-200 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-500 text-sm transition">
+                            <button onclick="executeHomeSearch()" class="absolute right-2 top-2 bottom-2 px-5 gradient-bg text-white rounded-xl text-xs font-bold shadow-md hover:opacity-90 transition">Suchen</button>
+                        </div>
+                    </div>
+
+                    ${latestPost ? `
+                        <!-- Latest Post Spotlight Banner -->
+                        <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden grid grid-cols-1 lg:grid-cols-2 hover:shadow-md transition">
+                            <div class="h-64 lg:h-auto relative overflow-hidden bg-slate-100">
+                                <img src="${latestPost.image}" alt="${latestPost.title}" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/800x600/f1f5f9/64748b?text=Mijokama'">
+                                <span class="absolute top-4 left-4 bg-pink-600 text-white px-3 py-1 rounded-xl text-xs font-bold shadow">Aktuellster Beitrag</span>
+                            </div>
+                            <div class="p-8 sm:p-12 flex flex-col justify-between space-y-6">
+                                <div class="space-y-4">
+                                    <div class="flex items-center space-x-2 text-xs font-semibold text-slate-400">
+                                        <span class="text-pink-600 bg-pink-50 px-2.5 py-1 rounded-lg">${latestPost.category}</span>
+                                        <span>&bull;</span>
+                                        <span>${latestPost.date}</span>
+                                    </div>
+                                    <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 leading-snug">${latestPost.title}</h2>
+                                    <p class="text-slate-600 text-sm line-clamp-3 leading-relaxed">${latestPost.content}</p>
+                                </div>
+                                <button onclick="router.navigate('post-detail', null, '${latestPost.id}')" class="inline-flex items-center justify-center gap-2 w-full sm:w-auto bg-slate-900 hover:bg-slate-800 text-white px-6 py-3.5 rounded-2xl text-xs font-bold transition shadow">
+                                    Vollständigen Beitrag lesen <i class="fa-solid fa-arrow-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                    ` : ''}
+
+                    <!-- Personalized Feed Section -->
+                    <div class="space-y-6">
+                        <div class="flex justify-between items-end">
+                            <div>
+                                <span class="text-xs font-bold uppercase tracking-wider text-pink-600">Entdecken</span>
+                                <h2 class="text-2xl font-bold text-slate-900">Dein personalisierter Feed</h2>
+                            </div>
+                            <button onclick="router.navigate('blog')" class="text-sm font-semibold text-pink-600 hover:underline">Alle Beiträge ansehen &rarr;</button>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            ${feedPosts.map(post => `
+                                <div onclick="router.navigate('post-detail', null, '${post.id}')" class="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-lg transition cursor-pointer flex flex-col justify-between group">
+                                    <div>
+                                        <div class="h-48 overflow-hidden relative bg-slate-100">
+                                            <img src="${post.image}" alt="${post.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" onerror="this.src='https://placehold.co/600x400/f1f5f9/64748b?text=Mijokama'">
+                                            <span class="absolute top-3 left-3 bg-white/90 backdrop-blur-sm text-slate-800 px-3 py-1 rounded-xl text-xs font-bold">${post.category}</span>
+                                        </div>
+                                        <div class="p-6 space-y-3">
+                                            <div class="text-xs text-slate-400 font-medium">${post.date}</div>
+                                            <h3 class="font-bold text-lg text-slate-900 group-hover:text-pink-600 transition line-clamp-2">${post.title}</h3>
+                                            <p class="text-slate-600 text-xs line-clamp-2 leading-relaxed">${post.content}</p>
+                                        </div>
+                                    </div>
+                                    <div class="px-6 pb-6 pt-2 flex items-center justify-between border-t border-slate-100 text-xs text-slate-500">
+                                        <span class="flex items-center gap-1.5"><i class="fa-solid fa-heart text-pink-500"></i> ${post.likes} Likes</span>
+                                        <span class="text-pink-600 font-semibold group-hover:translate-x-1 transition">Lesen &rarr;</span>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <!-- Guest Contribution Banner -->
+                    <div class="bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-100 rounded-3xl p-8 sm:p-12 flex flex-col md:flex-row items-center justify-between gap-8">
+                        <div class="space-y-3 text-center md:text-left">
+                            <span class="bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-xs font-bold">Mitgestalten</span>
+                            <h3 class="text-2xl font-bold text-slate-900">Hast du eine eigene Geschichte zu erzählen?</h3>
+                            <p class="text-slate-600 text-sm max-w-xl">Reiche jetzt deinen Gastbeitrag ein! Nach einer kurzen Prüfung durch den Admin wird er auf Mijokama veröffentlicht.</p>
+                        </div>
+                        <button onclick="openGuestPostModal()" class="gradient-bg text-white font-bold px-8 py-4 rounded-2xl shadow-lg hover:opacity-90 transition text-sm whitespace-nowrap">
+                            Gastbeitrag einreichen
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function handleHomeSearch(e) {
+            if (e.key === 'Enter') {
+                executeHomeSearch();
+            }
+        }
+
+        function executeHomeSearch() {
+            const query = document.getElementById('home-search-input').value;
+            router.navigate('blog', 'all');
+            setTimeout(() => {
+                const blogSearch = document.getElementById('blog-search-input');
+                if (blogSearch) {
+                    blogSearch.value = query;
+                    filterBlogPosts();
+                }
+            }, 100);
+        }
+
+        // --- 2. Blog Section ---
+        function renderBlogPage(categoryFilter = 'all') {
+            const published = appState.posts.filter(p => p.status === 'published');
+            const categories = ['all', 'Lifestyle', 'Food', 'Selflove and Mindset', 'Just-In-Case'];
+            
+            return `
+                <div class="space-y-8 animate-fadeIn">
+                    <div class="text-center max-w-2xl mx-auto space-y-3">
+                        <span class="text-xs font-bold uppercase tracking-wider text-pink-600">Entdeckungsreise</span>
+                        <h1 class="text-3xl sm:text-4xl font-black text-slate-900">Der Mijokama Blog</h1>
+                        <p class="text-slate-600 text-sm">Wähle eine Kategorie oder durchsuche alle Artikel nach deinen Lieblingsthemen.</p>
+                    </div>
+
+                    <!-- Category Filter Tabs & Search -->
+                    <div class="flex flex-col md:flex-row justify-between items-center gap-4 bg-white p-4 rounded-3xl border border-slate-200 shadow-sm">
+                        <div class="flex flex-wrap gap-2 w-full md:w-auto">
+                            ${categories.map(cat => {
+                                const active = categoryFilter === cat ? 'gradient-bg text-white shadow-md' : 'bg-slate-100 hover:bg-slate-200 text-slate-600';
+                                const label = cat === 'all' ? 'Alle Beiträge' : cat;
+                                return `<button onclick="router.navigate('blog', '${cat}')" class="px-4 py-2 rounded-2xl text-xs font-bold transition ${active}">${label}</button>`;
+                            }).join('')}
+                        </div>
+                        <div class="w-full md:w-72 relative">
+                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                                <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                            </span>
+                            <input type="text" id="blog-search-input" onkeyup="filterBlogPosts()" placeholder="Stichpunkte durchsuchen..." class="w-full pl-9 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-pink-500">
+                        </div>
+                    </div>
+
+                    <!-- Blog Grid -->
+                    <div id="blog-posts-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        ${renderBlogCards(categoryFilter)}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderBlogCards(categoryFilter, searchQuery = '') {
+            let posts = appState.posts.filter(p => p.status === 'published');
+            if (categoryFilter && categoryFilter !== 'all') {
+                posts = posts.filter(p => p.category === categoryFilter);
+            }
+            if (searchQuery) {
+                const q = searchQuery.toLowerCase();
+                posts = posts.filter(p => p.title.toLowerCase().includes(q) || p.content.toLowerCase().includes(q) || p.category.toLowerCase().includes(q));
+            }
+
+            if (posts.length === 0) {
+                return `
+                    <div class="col-span-full py-16 text-center space-y-4 bg-white rounded-3xl border border-slate-200">
+                        <div class="w-16 h-16 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mx-auto text-2xl">
+                            <i class="fa-solid fa-face-frown"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-800">Keine Beiträge gefunden</h3>
+                        <p class="text-xs text-slate-500">Zu dieser Suche oder Kategorie existieren aktuell noch keine Beiträge.</p>
+                    </div>
+                `;
+            }
+
+            return posts.slice().reverse().map(post => `
+                <div onclick="router.navigate('post-detail', null, '${post.id}')" class="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-lg transition cursor-pointer flex flex-col justify-between group">
+                    <div>
+                        <div class="h-48 overflow-hidden relative bg-slate-100">
+                            <img src="${post.image}" alt="${post.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" onerror="this.src='https://placehold.co/600x400/f1f5f9/64748b?text=Mijokama'">
+                            <span class="absolute top-3 left-3 bg-white/90 backdrop-blur-sm text-slate-800 px-3 py-1 rounded-xl text-xs font-bold">${post.category}</span>
+                            ${post.video ? '<span class="absolute top-3 right-3 bg-red-600 text-white px-2.5 py-1 rounded-xl text-xs font-bold"><i class="fa-solid fa-play"></i> Video</span>' : ''}
+                        </div>
+                        <div class="p-6 space-y-3">
+                            <div class="text-xs text-slate-400 font-medium">${post.date} &bull; von ${post.author}</div>
+                            <h3 class="font-bold text-lg text-slate-900 group-hover:text-pink-600 transition line-clamp-2">${post.title}</h3>
+                            <p class="text-slate-600 text-xs line-clamp-3 leading-relaxed">${post.content}</p>
+                        </div>
+                    </div>
+                    <div class="px-6 pb-6 pt-2 flex items-center justify-between border-t border-slate-100 text-xs text-slate-500">
+                        <span class="flex items-center gap-1.5"><i class="fa-solid fa-heart text-pink-500"></i> ${post.likes} Likes</span>
+                        <span class="text-pink-600 font-semibold group-hover:translate-x-1 transition">Beitrag lesen &rarr;</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterBlogPosts() {
+            const query = document.getElementById('blog-search-input').value;
+            const grid = document.getElementById('blog-posts-grid');
+            grid.innerHTML = renderBlogCards(router.currentParam, query);
+        }
+
+        // --- 3. Post Detail View (Text, Image, Video, Likes, Comments) ---
+        function renderPostDetailPage(postId) {
+            const post = appState.posts.find(p => p.id === postId);
+            if (!post) {
+                return `<div class="py-20 text-center"><h2 class="text-xl font-bold">Beitrag nicht gefunden.</h2><button onclick="router.navigate('home')" class="mt-4 text-pink-600 font-semibold">&larr; Zurück zur Startseite</button></div>`;
+            }
+
+            const comments = appState.comments[postId] || [];
+            const userLiked = appState.currentUser && post.likedBy && post.likedBy.includes(appState.currentUser.username);
+            const isAdmin = appState.currentUser && appState.currentUser.role === 'admin';
+
+            // Convert youtube watch link to embed if necessary
+            let videoEmbed = '';
+            if (post.video) {
+                let embedUrl = post.video;
+                if (embedUrl.includes('watch?v=')) {
+                    embedUrl = embedUrl.replace('watch?v=', 'embed/');
+                }
+                videoEmbed = `
+                    <div class="my-8 rounded-3xl overflow-hidden shadow-lg aspect-video bg-slate-900">
+                        <iframe src="${embedUrl}" class="w-full h-full" frameborder="0" allowfullscreen></iframe>
+                    </div>
+                `;
+            }
+
+            return `
+                <div class="max-w-4xl mx-auto space-y-8 animate-fadeIn">
+                    <button onclick="router.navigate('blog')" class="text-xs font-bold text-slate-500 hover:text-pink-600 transition flex items-center gap-2">
+                        <i class="fa-solid fa-arrow-left"></i> Zurück zur Übersicht
+                    </button>
+
+                    <!-- Post Header -->
+                    <div class="space-y-4">
+                        <div class="flex items-center space-x-3 text-xs font-semibold text-slate-500">
+                            <span class="bg-pink-50 text-pink-600 px-3 py-1 rounded-xl">${post.category}</span>
+                            <span>&bull;</span>
+                            <span>${post.date}</span>
+                            <span>&bull;</span>
+                            <span>Von ${post.author}</span>
+                        </div>
+                        <h1 class="text-3xl sm:text-5xl font-black text-slate-900 tracking-tight leading-tight">${post.title}</h1>
+                    </div>
+
+                    <!-- Featured Image -->
+                    <div class="rounded-3xl overflow-hidden shadow-xl max-h-[500px] bg-slate-100">
+                        <img src="${post.image}" alt="${post.title}" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/1200x600/f1f5f9/64748b?text=Mijokama'">
+                    </div>
+
+                    <!-- Post Content -->
+                    <div class="bg-white rounded-3xl p-8 sm:p-12 border border-slate-200 shadow-sm space-y-8">
+                        <div class="prose max-w-none text-slate-700 text-base sm:text-lg leading-relaxed whitespace-pre-line">
+                            ${post.content}
+                        </div>
+
+                        ${videoEmbed}
+
+                        <!-- Like Button (Likes only, no dislikes) -->
+                        <div class="pt-8 border-t border-slate-100 flex items-center justify-between">
+                            <button onclick="toggleLike('${post.id}')" class="flex items-center gap-2.5 px-6 py-3 rounded-2xl font-bold text-sm transition ${userLiked ? 'bg-pink-500 text-white shadow-lg shadow-pink-500/30' : 'bg-slate-100 hover:bg-slate-200 text-slate-700'}">
+                                <i class="fa-solid fa-heart ${userLiked ? 'text-white' : 'text-pink-500'}"></i>
+                                <span>${post.likes} ${post.likes === 1 ? 'Like' : 'Likes'}</span>
+                            </button>
+                            ${isAdmin ? `
+                                <button onclick="deletePost('${post.id}')" class="text-red-500 hover:bg-red-50 px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5">
+                                    <i class="fa-solid fa-trash"></i> Beitrag löschen
+                                </button>
+                            ` : ''}
+                        </div>
+                    </div>
+
+                    <!-- Comments Section -->
+                    <div class="bg-white rounded-3xl p-8 sm:p-12 border border-slate-200 shadow-sm space-y-8">
+                        <h3 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+                            <i class="fa-solid fa-comments text-pink-500"></i> Kommentare (${comments.length})
+                        </h3>
+
+                        <!-- Add Comment Form -->
+                        <form onsubmit="submitComment(event, '${post.id}')" class="space-y-4">
+                            ${!appState.currentUser ? `
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-700 mb-1">Dein Name</label>
+                                    <input type="text" id="comment-author" required placeholder="z.B. Lisa" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-pink-500">
+                                </div>
+                            ` : `
+                                <p class="text-xs text-slate-500">Kommentieren als <strong class="text-slate-800">${appState.currentUser.username}</strong></p>
+                            `}
+                            <div>
+                                <textarea id="comment-text" rows="3" required placeholder="Schreibe einen netten Kommentar..." class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-pink-500 resize-none"></textarea>
+                            </div>
+                            <button type="submit" class="gradient-bg text-white font-bold px-6 py-3 rounded-xl text-xs shadow-md hover:opacity-90 transition">
+                                Kommentar abschicken
+                            </button>
+                        </form>
+
+                        <!-- Comment List -->
+                        <div class="space-y-4 pt-4 border-t border-slate-100">
+                            ${comments.length === 0 ? '<p class="text-xs text-slate-400 italic">Noch keine Kommentare. Schreibe den ersten!</p>' : ''}
+                            ${comments.map(c => `
+                                <div class="bg-slate-50 p-5 rounded-2xl border border-slate-100 flex justify-between items-start">
+                                    <div class="space-y-1">
+                                        <div class="flex items-center space-x-2">
+                                            <span class="font-bold text-xs text-slate-800">${c.author}</span>
+                                            <span class="text-slate-400 text-[10px]">&bull; ${c.date}</span>
+                                        </div>
+                                        <p class="text-slate-600 text-xs leading-relaxed">${c.text}</p>
+                                    </div>
+                                    ${isAdmin ? `
+                                        <button onclick="deleteComment('${post.id}', '${c.id}')" class="text-slate-400 hover:text-red-500 text-xs p-1" title="Kommentar löschen">
+                                            <i class="fa-solid fa-xmark"></i>
+                                        </button>
+                                    ` : ''}
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function toggleLike(postId) {
+            if (!appState.currentUser) {
+                openAuthModal('login');
+                showToast('Bitte melde dich an, um Beiträge zu liken.', 'error');
+                return;
+            }
+            const post = appState.posts.find(p => p.id === postId);
+            if (!post) return;
+            
+            if (!post.likedBy) post.likedBy = [];
+            const userIndex = post.likedBy.indexOf(appState.currentUser.username);
+            
+            if (userIndex > -1) {
+                post.likedBy.splice(userIndex, 1);
+                post.likes = Math.max(0, post.likes - 1);
+                showToast('Like entfernt.');
+            } else {
+                post.likedBy.push(appState.currentUser.username);
+                post.likes += 1;
+                showToast('Beitrag geliked! ❤️');
+            }
+            saveState();
+            renderApp();
+        }
+
+        function submitComment(e, postId) {
+            e.preventDefault();
+            const text = document.getElementById('comment-text').value;
+            const author = appState.currentUser ? appState.currentUser.username : document.getElementById('comment-author').value;
+
+            if (!appState.comments[postId]) {
+                appState.comments[postId] = [];
+            }
+
+            appState.comments[postId].push({
+                id: 'c-' + Date.now(),
+                author,
+                text,
+                date: new Date().toISOString().split('T')[0]
+            });
+
+            saveState();
+            showToast('Kommentar erfolgreich veröffentlicht.');
+            renderApp();
+        }
+
+        function deleteComment(postId, commentId) {
+            if (!appState.comments[postId]) return;
+            appState.comments[postId] = appState.comments[postId].filter(c => c.id !== commentId);
+            saveState();
+            showToast('Kommentar gelöscht.');
+            renderApp();
+        }
+
+        function deletePost(postId) {
+            if (!confirm('Möchtest du diesen Beitrag wirklich unwiderruflich löschen?')) return;
+            appState.posts = appState.posts.filter(p => p.id !== postId);
+            saveState();
+            showToast('Beitrag erfolgreich gelöscht.');
+            router.navigate('blog');
+        }
+
+        // --- 4. "Über mich" (About Me) Section ---
+        function renderAboutPage() {
+            const isAdmin = appState.currentUser && appState.currentUser.role === 'admin';
+
+            return `
+                <div class="max-w-4xl mx-auto space-y-12 animate-fadeIn">
+                    <div class="text-center space-y-3">
+                        <span class="text-xs font-bold uppercase tracking-wider text-pink-600">Hinter den Kulissen</span>
+                        <h1 class="text-3xl sm:text-5xl font-black text-slate-900">Über mich</h1>
+                        <p class="text-slate-600 text-sm">Lerne den Kopf hinter Mijokama kennen.</p>
+                    </div>
+
+                    <div class="bg-white rounded-3xl border border-slate-200 p-8 sm:p-12 shadow-sm grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
+                        <div class="text-center">
+                            <div class="w-48 h-48 mx-auto rounded-full gradient-bg p-1.5 shadow-xl">
+                                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80" alt="Admin Avatar" class="w-full h-full object-cover rounded-full">
+                            </div>
+                            <h3 class="mt-4 font-bold text-lg text-slate-900">Mijokama Creator</h3>
+                            <p class="text-xs text-slate-500">Lifestyle & Mindset Blogger</p>
+                        </div>
+                        <div class="md:col-span-2 space-y-6">
+                            <div class="prose max-w-none text-slate-700 text-sm sm:text-base leading-relaxed whitespace-pre-line">
+                                ${appState.aboutText}
+                            </div>
+                            
+                            ${isAdmin ? `
+                                <div class="pt-4 border-t border-slate-100">
+                                    <button onclick="openEditAboutModal()" class="bg-slate-900 hover:bg-slate-800 text-white font-bold px-6 py-3 rounded-2xl text-xs transition flex items-center gap-2 shadow">
+                                        <i class="fa-solid fa-pen-to-square"></i> Über mich Text bearbeiten (Admin)
+                                    </button>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- 5. Kontakt & Private Messages ---
+        function renderContactPage() {
+            return `
+                <div class="max-w-2xl mx-auto space-y-8 animate-fadeIn">
+                    <div class="text-center space-y-3">
+                        <span class="text-xs font-bold uppercase tracking-wider text-pink-600">Sag Hallo</span>
+                        <h1 class="text-3xl sm:text-4xl font-black text-slate-900">Kontakt & Private Nachricht</h1>
+                        <p class="text-slate-600 text-sm">Hast du Fragen, Feedback oder möchtest mir privat schreiben? Nutze das Formular unten.</p>
+                    </div>
+
+                    <div class="bg-white rounded-3xl border border-slate-200 p-8 sm:p-10 shadow-sm">
+                        <form onsubmit="submitPrivateMessage(event)" class="space-y-6">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-2">Dein Name / Absender</label>
+                                <input type="text" id="msg-name" required placeholder="z.B. Anna" class="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-pink-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-2">Deine E-Mail-Adresse</label>
+                                <input type="email" id="msg-email" required placeholder="anna@example.com" class="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-pink-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-2">Deine private Nachricht an den Admin</label>
+                                <textarea id="msg-content" rows="5" required placeholder="Schreibe deine Nachricht hier..." class="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-pink-500 resize-none"></textarea>
+                            </div>
+                            <button type="submit" class="w-full gradient-bg text-white font-bold py-4 rounded-2xl shadow-lg hover:opacity-90 transition text-sm flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-paper-plane"></i> Nachricht privat abschicken
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            `;
+        }
+
+        function submitPrivateMessage(e) {
+            e.preventDefault();
+            const name = document.getElementById('msg-name').value;
+            const email = document.getElementById('msg-email').value;
+            const content = document.getElementById('msg-content').value;
+
+            appState.messages.push({
+                id: 'msg-' + Date.now(),
+                name,
+                email,
+                content,
+                date: new Date().toISOString().split('T')[0],
+                reply: null
+            });
+
+            saveState();
+            showToast('Deine Nachricht wurde erfolgreich privat an den Admin gesendet! 💌');
+            e.target.reset();
+        }
+
+        // --- 6. Admin Dashboard ---
+        function renderAdminDashboard() {
+            return `
+                <div class="max-w-6xl mx-auto space-y-8 animate-fadeIn">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+                        <div>
+                            <span class="bg-pink-100 text-pink-600 px-3 py-1 rounded-full text-xs font-bold">Admin-Zentrale</span>
+                            <h1 class="text-2xl sm:text-3xl font-black text-slate-900 mt-1">Dashboard & Verwaltung</h1>
+                        </div>
+                        <button onclick="openNewPostModal()" class="gradient-bg text-white font-bold px-6 py-3.5 rounded-2xl shadow-md hover:opacity-90 transition text-xs flex items-center gap-2">
+                            <i class="fa-solid fa-plus"></i> Neuen Beitrag erstellen
+                        </button>
+                    </div>
+
+                    <!-- Admin Tabs Navigation -->
+                    <div class="flex overflow-x-auto space-x-2 border-b border-slate-200 pb-2">
+                        <button onclick="switchAdminTab('posts')" id="admin-tab-posts" class="admin-tab-btn px-6 py-3 rounded-2xl text-xs font-bold transition bg-slate-900 text-white shadow">Beiträge & Entwürfe (${appState.posts.length})</button>
+                        <button onclick="switchAdminTab('submissions')" id="admin-tab-submissions" class="admin-tab-btn px-6 py-3 rounded-2xl text-xs font-bold transition bg-white hover:bg-slate-100 text-slate-600">Gastbeiträge (${appState.guestSubmissions.length})</button>
+                        <button onclick="switchAdminTab('messages')" id="admin-tab-messages" class="admin-tab-btn px-6 py-3 rounded-2xl text-xs font-bold transition bg-white hover:bg-slate-100 text-slate-600">Postfach / Nachrichten (${appState.messages.length})</button>
+                    </div>
+
+                    <!-- Admin Tab Contents -->
+                    <div id="admin-tab-content" class="space-y-6">
+                        ${renderAdminPostsTab()}
+                    </div>
+                </div>
+            `;
+        }
+
+        function switchAdminTab(tabName) {
+            document.querySelectorAll('.admin-tab-btn').forEach(btn => {
+                btn.className = 'admin-tab-btn px-6 py-3 rounded-2xl text-xs font-bold transition bg-white hover:bg-slate-100 text-slate-600';
+            });
+            document.getElementById(`admin-tab-${tabName}`).className = 'admin-tab-btn px-6 py-3 rounded-2xl text-xs font-bold transition bg-slate-900 text-white shadow';
+
+            const content = document.getElementById('admin-tab-content');
+            if (tabName === 'posts') content.innerHTML = renderAdminPostsTab();
+            if (tabName === 'submissions') content.innerHTML = renderAdminSubmissionsTab();
+            if (tabName === 'messages') content.innerHTML = renderAdminMessagesTab();
+        }
+
+        function renderAdminPostsTab() {
+            return `
+                <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+                    <div class="p-6 border-b border-slate-100">
+                        <h3 class="font-bold text-slate-900 text-base">Alle Beiträge & Entwürfe verwalten</h3>
+                        <p class="text-xs text-slate-500">Erstelle, bearbeite, veröffentliche oder speichere Beiträge als Entwurf.</p>
+                    </div>
+                    <div class="divide-y divide-slate-100">
+                        ${appState.posts.length === 0 ? '<div class="p-8 text-center text-xs text-slate-400">Keine Beiträge vorhanden.</div>' : ''}
+                        {postsListHtml}
+                    </div>
+                </div>
+            `.replace('{postsListHtml}', appState.posts.slice().reverse().map(p => `
+                <div class="p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 hover:bg-slate-50 transition">
+                    <div class="space-y-1">
+                        <div class="flex items-center space-x-2 text-xs">
+                            <span class="font-bold px-2.5 py-0.5 rounded-lg ${p.status === 'published' ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'}">${p.status === 'published' ? 'Öffentlich' : 'Entwurf'}</span>
+                            <span class="bg-slate-100 text-slate-600 px-2.5 py-0.5 rounded-lg">${p.category}</span>
+                            <span class="text-slate-400">${p.date}</span>
+                        </div>
+                        <h4 class="font-bold text-slate-900 text-base">${p.title}</h4>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <button onclick="openEditPostModal('${p.id}')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-xl text-xs font-semibold transition">Bearbeiten</button>
+                        <button onclick="deletePost('${p.id}')" class="bg-red-50 hover:bg-red-100 text-red-600 px-4 py-2 rounded-xl text-xs font-semibold transition">Löschen</button>
+                    </div>
+                </div>
+            `).join(''));
+        }
+
+        function renderAdminSubmissionsTab() {
+            return `
+                <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+                    <div class="p-6 border-b border-slate-100">
+                        <h3 class="font-bold text-slate-900 text-base">Eingereichte Gastbeiträge</h3>
+                        <p class="text-xs text-slate-500">Prüfe eingereichte Beiträge von Lesern und entscheide über die Veröffentlichung.</p>
+                    </div>
+                    <div class="divide-y divide-slate-100">
+                        ${appState.guestSubmissions.length === 0 ? '<div class="p-8 text-center text-xs text-slate-400">Aktuell keine eingereichten Gastbeiträge.</div>' : ''}
+                        {submissionsListHtml}
+                    </div>
+                </div>
+            `.replace('{submissionsListHtml}', appState.guestSubmissions.slice().reverse().map(sub => `
+                <div class="p-6 space-y-4 hover:bg-slate-50 transition">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <span class="bg-purple-50 text-purple-600 px-2.5 py-1 rounded-lg text-xs font-bold">${sub.category}</span>
+                            <h4 class="font-bold text-slate-900 text-lg mt-2">${sub.title}</h4>
+                            <p class="text-xs text-slate-400 mt-0.5">Eingereicht von: <strong class="text-slate-700">${sub.author}</strong> (${sub.email}) am ${sub.date}</p>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <button onclick="approveSubmission('${sub.id}')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl text-xs font-bold shadow transition">Veröffentlichen</button>
+                            <button onclick="rejectSubmission('${sub.id}')" class="bg-red-50 hover:bg-red-100 text-red-600 px-4 py-2 rounded-xl text-xs font-bold transition">Ablehnen</button>
+                        </div>
+                    </div>
+                    <p class="text-slate-600 text-xs sm:text-sm bg-slate-50 p-4 rounded-2xl border border-slate-100 leading-relaxed">${sub.content}</p>
+                </div>
+            `).join(''));
+        }
+
+        function renderAdminMessagesTab() {
+            return `
+                <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+                    <div class="p-6 border-b border-slate-100">
+                        <h3 class="font-bold text-slate-900 text-base">Private Nachrichten (Postfach)</h3>
+                        <p class="text-xs text-slate-500">Nachrichten von Lesern, auf die du direkt antworten kannst.</p>
+                    </div>
+                    <div class="divide-y divide-slate-100">
+                        ${appState.messages.length === 0 ? '<div class="p-8 text-center text-xs text-slate-400">Keine privaten Nachrichten vorhanden.</div>' : ''}
+                        {messagesListHtml}
+                    </div>
+                </div>
+            `.replace('{messagesListHtml}', appState.messages.slice().reverse().map(msg => `
+                <div class="p-6 space-y-4 hover:bg-slate-50 transition">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h4 class="font-bold text-slate-900 text-base">${msg.name} <span class="text-xs font-normal text-slate-400">(${msg.email})</span></h4>
+                            <span class="text-xs text-slate-400">Eingegangen am ${msg.date}</span>
+                        </div>
+                        <button onclick="deleteMessage('${msg.id}')" class="text-slate-400 hover:text-red-500 text-xs"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                    <p class="text-slate-700 text-xs sm:text-sm bg-slate-50 p-4 rounded-2xl border border-slate-100">${msg.content}</p>
+                    
+                    ${msg.reply ? `
+                        <div class="ml-6 bg-pink-50/50 p-4 rounded-2xl border border-pink-100 space-y-1">
+                            <span class="text-xs font-bold text-pink-600">Deine Antwort:</span>
+                            <p class="text-slate-700 text-xs">${msg.reply}</p>
+                        </div>
+                    ` : `
+                        <div class="pt-2">
+                            <div class="flex gap-2">
+                                <input type="text" id="reply-input-${msg.id}" placeholder="Antwort schreiben..." class="flex-grow px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-pink-500">
+                                <button onclick="sendAdminReply('${msg.id}')" class="bg-slate-900 text-white px-5 py-2.5 rounded-xl text-xs font-bold shadow hover:bg-slate-800 transition">Antworten</button>
+                            </div>
+                        </div>
+                    `}
+                </div>
+            `).join(''));
+        }
+
+        // --- Admin Actions ---
+        function approveSubmission(subId) {
+            const sub = appState.guestSubmissions.find(s => s.id === subId);
+            if (!sub) return;
+
+            appState.posts.push({
+                id: 'post-' + Date.now(),
+                title: sub.title,
+                category: sub.category,
+                content: sub.content,
+                image: sub.image || 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=800&q=80',
+                video: '',
+                author: sub.author,
+                date: new Date().toISOString().split('T')[0],
+                status: 'published',
+                likes: 0,
+                likedBy: []
+            });
+
+            appState.guestSubmissions = appState.guestSubmissions.filter(s => s.id !== subId);
+            saveState();
+            showToast('Gastbeitrag erfolgreich veröffentlicht!');
+            renderApp();
+        }
+
+        function rejectSubmission(subId) {
+            if (!confirm('Gastbeitrag wirklich ablehnen und löschen?')) return;
+            appState.guestSubmissions = appState.guestSubmissions.filter(s => s.id !== subId);
+            saveState();
+            showToast('Gastbeitrag abgelehnt.');
+            renderApp();
+        }
+
+        function deleteMessage(msgId) {
+            appState.messages = appState.messages.filter(m => m.id !== msgId);
+            saveState();
+            showToast('Nachricht gelöscht.');
+            renderApp();
+        }
+
+        function sendAdminReply(msgId) {
+            const input = document.getElementById(`reply-input-${msgId}`);
+            const replyText = input.value;
+            if (!replyText) return;
+
+            const msg = appState.messages.find(m => m.id === msgId);
+            if (msg) {
+                msg.reply = replyText;
+                saveState();
+                showToast('Antwort erfolgreich gesendet! ✉️');
+                renderApp();
+            }
+        }
+
+        // --- Modals (Auth, New Post, Edit Post, Guest Post, About Edit) ---
+        function closeModal() {
+            document.getElementById('modal-container').classList.add('hidden');
+        }
+
+        function showModal(htmlContent) {
+            const container = document.getElementById('modal-container');
+            const content = document.getElementById('modal-content');
+            content.innerHTML = htmlContent;
+            container.classList.remove('hidden');
+        }
+
+        function openAuthModal(mode = 'login') {
+            const isLogin = mode === 'login';
+            showModal(`
+                <div class="p-8 space-y-6">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-xl font-bold text-slate-900">${isLogin ? 'Anmelden' : 'Registrieren'}</h3>
+                        <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+                    </div>
+                    <form onsubmit="handleAuthSubmit(event, '${mode}')" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Benutzername</label>
+                            <input type="text" id="auth-username" required placeholder="z.B. admin oder anna" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-pink-500">
+                            ${isLogin ? '<p class="text-[10px] text-slate-400 mt-1">Hinweis für Admin: Benutzername "admin" und Kennwort "mijokama2026"</p>' : ''}
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Kennwort</label>
+                            <input type="password" id="auth-password" required placeholder="••••••••" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-pink-500">
+                        </div>
+                        <button type="submit" class="w-full gradient-bg text-white font-bold py-3.5 rounded-xl shadow-md hover:opacity-90 transition text-sm">
+                            ${isLogin ? 'Anmelden' : 'Konto erstellen'}
+                        </button>
+                    </form>
+                    <div class="text-center text-xs text-slate-500">
+                        ${isLogin ? 'Noch kein Konto? <a href="#" onclick="openAuthModal(\'register\')" class="text-pink-600 font-semibold">Jetzt registrieren</a>' : 'Bereits ein Konto? <a href="#" onclick="openAuthModal(\'login\')" class="text-pink-600 font-semibold">Anmelden</a>'}
+                    </div>
+                </div>
+            `);
+        }
+
+        function handleAuthSubmit(e, mode) {
+            e.preventDefault();
+            const username = document.getElementById('auth-username').value;
+            const password = document.getElementById('auth-password').value;
+
+            if (username === ADMIN_CREDENTIALS.username && password === ADMIN_CREDENTIALS.password) {
+                appState.currentUser = { username: 'Admin', role: 'admin' };
+                saveState();
+                closeModal();
+                showToast('Erfolgreich als Administrator angemeldet! 👑');
+                renderApp();
+                return;
+            }
+
+            if (mode === 'login') {
+                // simple simulated user login
+                appState.currentUser = { username, role: 'user' };
+                saveState();
+                closeModal();
+                showToast(`Willkommen zurück, ${username}! 👋`);
+                renderApp();
+            } else {
+                appState.currentUser = { username, role: 'user' };
+                saveState();
+                closeModal();
+                showToast(`Konto erstellt & angemeldet als ${username}! 🎉`);
+                renderApp();
+            }
+        }
+
+        function logout() {
+            appState.currentUser = null;
+            saveState();
+            showToast('Erfolgreich abgemeldet.');
+            router.navigate('home');
+        }
+
+        function openGuestPostModal() {
+            showModal(`
+                <div class="p-8 space-y-6 max-h-[90vh] overflow-y-auto">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-xl font-bold text-slate-900">Gastbeitrag einreichen</h3>
+                        <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+                    </div>
+                    <form onsubmit="handleGuestPostSubmit(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Dein Name / Pseudonym</label>
+                            <input type="text" id="gp-author" required placeholder="z.B. Sarah" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-pink-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Deine E-Mail</label>
+                            <input type="email" id="gp-email" required placeholder="sarah@example.com" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-pink-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Titel des Beitrags</label>
+                            <input type="text" id="gp-title" required placeholder="z.B. Meine Gedanken zum Frühling" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-pink-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Kategorie</label>
+                            <select id="gp-category" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-pink-500">
+                                <option value="Lifestyle">Lifestyle</option>
+                                <option value="Food">Food</option>
+                                <option value="Selflove and Mindset">Selflove and Mindset</option>
+                                <option value="Just-In-Case">Just-In-Case</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Beitragsinhalt (Text)</label>
+                            <textarea id="gp-content" rows="4" required placeholder="Schreibe deinen Beitrag..." class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-pink-500 resize-none"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Bild-URL (optional)</label>
+                            <input type="url" id="gp-image" placeholder="https://images.unsplash.com/..." class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-pink-500">
+                        </div>
+                        <button type="submit" class="w-full gradient-bg text-white font-bold py-3.5 rounded-xl shadow-md hover:opacity-90 transition text-sm">
+                            Gastbeitrag zur Prüfung einreichen
+                        </button>
+                    </form>
+                </div>
+            `);
+        }
+
+        function handleGuestPostSubmit(e) {
+            e.preventDefault();
+            appState.guestSubmissions.push({
+                id: 'gp-' + Date.now(),
+                author: document.getElementById('gp-author').value,
+                email: document.getElementById('gp-email').value,
+                title: document.getElementById('gp-title').value,
+                category: document.getElementById('gp-category').value,
+                content: document.getElementById('gp-content').value,
+                image: document.getElementById('gp-image').value,
+                date: new Date().toISOString().split('T')[0]
+            });
+            saveState();
+            closeModal();
+            showToast('Gastbeitrag erfolgreich eingereicht! Der Admin wird ihn prüfen. 🎉');
+        }
+
+        function openNewPostModal() {
+            showModal(`
+                <div class="p-8 space-y-6 max-h-[90vh] overflow-y-auto">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-xl font-bold text-slate-900">Neuen Beitrag erstellen</h3>
+                        <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+                    </div>
+                    <form onsubmit="handleNewPostSubmit(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Titel</label>
+                            <input type="text" id="np-title" required placeholder="Titel des Beitrags" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-pink-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Kategorie</label>
+                            <select id="np-category" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-pink-500">
+                                <option value="Lifestyle">Lifestyle</option>
+                                <option value="Food">Food</option>
+                                <option value="Selflove and Mindset">Selflove and Mindset</option>
+                                <option value="Just-In-Case">Just-In-Case</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Inhalt (Text)</label>
+                            <textarea id="np-content" rows="4" required placeholder="Text des Beitrags..." class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-pink-500 resize-none"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Bild-URL</label>
+                            <input type="url" id="np-image" placeholder="https://images.unsplash.com/..." class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-pink-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Video-URL oder Embed (optional)</label>
+                            <input type="text" id="np-video" placeholder="https://www.youtube.com/embed/..." class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-pink-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Status</label>
+                            <select id="np-status" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-pink-500">
+                                <option value="published">Öffentlich veröffentlichen</option>
+                                <option value="draft">Als Entwurf speichern (privat)</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="w-full gradient-bg text-white font-bold py-3.5 rounded-xl shadow-md hover:opacity-90 transition text-sm">
+                            Beitrag speichern
+                        </button>
+                    </form>
+                </div>
+            `);
+        }
+
+        function handleNewPostSubmit(e) {
+            e.preventDefault();
+            appState.posts.push({
+                id: 'post-' + Date.now(),
+                title: document.getElementById('np-title').value,
+                category: document.getElementById('np-category').value,
+                content: document.getElementById('np-content').value,
+                image: document.getElementById('np-image').value || 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=800&q=80',
+                video: document.getElementById('np-video').value,
+                author: 'Admin',
+                date: new Date().toISOString().split('T')[0],
+                status: document.getElementById('np-status').value,
+                likes: 0,
+                likedBy: []
+            });
+            saveState();
+            closeModal();
+            showToast('Beitrag erfolgreich gespeichert!');
+            renderApp();
+        }
+
+        function openEditPostModal(postId) {
+            const post = appState.posts.find(p => p.id === postId);
+            if (!post) return;
+
+            showModal(`
+                <div class="p-8 space-y-6 max-h-[90vh] overflow-y-auto">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-xl font-bold text-slate-900">Beitrag bearbeiten</h3>
+                        <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+                    </div>
+                    <form onsubmit="handleEditPostSubmit(event, '${post.id}')" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Titel</label>
+                            <input type="text" id="ep-title" required value="${post.title}" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-pink-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Kategorie</label>
+                            <select id="ep-category" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-pink-500">
+                                <option value="Lifestyle" ${post.category === 'Lifestyle' ? 'selected' : ''}>Lifestyle</option>
+                                <option value="Food" ${post.category === 'Food' ? 'selected' : ''}>Food</option>
+                                <option value="Selflove and Mindset" ${post.category === 'Selflove and Mindset' ? 'selected' : ''}>Selflove and Mindset</option>
+                                <option value="Just-In-Case" ${post.category === 'Just-In-Case' ? 'selected' : ''}>Just-In-Case</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Inhalt (Text)</label>
+                            <textarea id="ep-content" rows="4" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-pink-500 resize-none">${post.content}</textarea>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Bild-URL</label>
+                            <input type="url" id="ep-image" value="${post.image}" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-pink-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Video-URL oder Embed</label>
+                            <input type="text" id="ep-video" value="${post.video || ''}" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-pink-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Status</label>
+                            <select id="ep-status" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-pink-500">
+                                <option value="published" ${post.status === 'published' ? 'selected' : ''}>Öffentlich</option>
+                                <option value="draft" ${post.status === 'draft' ? 'selected' : ''}>Entwurf (privat)</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="w-full gradient-bg text-white font-bold py-3.5 rounded-xl shadow-md hover:opacity-90 transition text-sm">
+                            Änderungen speichern
+                        </button>
+                    </form>
+                </div>
+            `);
+        }
+
+        function handleEditPostSubmit(e, postId) {
+            e.preventDefault();
+            const post = appState.posts.find(p => p.id === postId);
+            if (!post) return;
+
+            post.title = document.getElementById('ep-title').value;
+            post.category = document.getElementById('ep-category').value;
+            post.content = document.getElementById('ep-content').value;
+            post.image = document.getElementById('ep-image').value;
+            post.video = document.getElementById('ep-video').value;
+            post.status = document.getElementById('ep-status').value;
+
+            saveState();
+            closeModal();
+            showToast('Beitrag erfolgreich aktualisiert!');
+            renderApp();
+        }
+
+        function openEditAboutModal() {
+            showModal(`
+                <div class="p-8 space-y-6">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-xl font-bold text-slate-900">"Über mich" bearbeiten</h3>
+                        <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+                    </div>
+                    <form onsubmit="handleEditAboutSubmit(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Inhalt (Markdown/Text)</label>
+                            <textarea id="about-textarea" rows="8" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-pink-500 resize-none">${appState.aboutText}</textarea>
+                        </div>
+                        <button type="submit" class="w-full gradient-bg text-white font-bold py-3.5 rounded-xl shadow-md hover:opacity-90 transition text-sm">
+                            Änderungen speichern
+                        </button>
+                    </form>
+                </div>
+            `);
+        }
+
+        function handleEditAboutSubmit(e) {
+            e.preventDefault();
+            appState.aboutText = document.getElementById('about-textarea').value;
+            saveState();
+            closeModal();
+            showToast('"Über mich" erfolgreich aktualisiert!');
+            renderApp();
+        }
+
+        function showModal(typeOrHtml) {
+            const container = document.getElementById('modal-container');
+            const content = document.getElementById('modal-content');
+            
+            if (typeOrHtml === 'impressum') {
+                content.innerHTML = `
+                    <div class="p-8 space-y-4">
+                        <h3 class="text-xl font-bold text-slate-900">Impressum</h3>
+                        <p class="text-xs text-slate-600 leading-relaxed">Angaben gemäß § 5 TMG:<br>Mijokama – Me, my Life and I<br>Musterstraße 1<br>12345 Musterstadt<br>E-Mail: kontakt@mijokama.de</p>
+                        <button onclick="closeModal()" class="w-full bg-slate-900 text-white py-3 rounded-xl text-xs font-bold">Schließen</button>
+                    </div>
+                `;
+            } else if (typeOrHtml === 'datenschutz') {
+                content.innerHTML = `
+                    <div class="p-8 space-y-4">
+                        <h3 class="text-xl font-bold text-slate-900">Datenschutzerklärung</h3>
+                        <p class="text-xs text-slate-600 leading-relaxed">Wir nehmen den Schutz deiner persönlichen Daten sehr ernst. Diese Website speichert Daten lokal im Browser (localStorage) für den Prototypen-Modus und GitHub Pages Kompatibilität.</p>
+                        <button onclick="closeModal()" class="w-full bg-slate-900 text-white py-3 rounded-xl text-xs font-bold">Schließen</button>
+                    </div>
+                `;
+            } else {
+                content.innerHTML = typeOrHtml;
+            }
+            container.classList.remove('hidden');
+        }
+
+        // --- Initialize on Page Load ---
+        window.onload = function() {
+            renderApp();
+        };
+    </script>
+</body>
+</html>
