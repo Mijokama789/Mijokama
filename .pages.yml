@@ -1,0 +1,13 @@
+media: blogentry
+content:
+- name: Blogentry
+  lable: Blogentry
+  type: collection
+  filename: 'blogentry.json'
+  fields:
+   - {name: title, lable: Number, type: string, required: true}
+   - {name: published, lable: published, type: boolean, required: true}
+   - {name: name, lable: Titel, type: string, required: true}
+   - {name: content, lable: Content, type: rich-text, required: true}
+   - {name: image, lable: image, type: image, required: true}
+   - {name: url, lable: url, type: string}
